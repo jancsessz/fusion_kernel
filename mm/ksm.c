@@ -193,10 +193,8 @@ static unsigned int ksm_thread_sleep_millisecs = 1500;
 /* Boolean to indicate whether to use deferred timer or not */
 static bool use_deferred_timer = 1;
 
-#define KSM_RUN_STOP	0
-#define KSM_RUN_MERGE	1
-#define KSM_RUN_UNMERGE	2
-static unsigned int ksm_run = KSM_RUN_STOP;
+unsigned int ksm_run = KSM_RUN_MERGE;
+unsigned int ksm_run_stored;
 
 static DECLARE_WAIT_QUEUE_HEAD(ksm_thread_wait);
 static DEFINE_MUTEX(ksm_thread_mutex);
@@ -2015,6 +2013,8 @@ static ssize_t run_store(struct kobject *kobj, struct kobj_attribute *attr,
 	if (flags & KSM_RUN_MERGE)
 		wake_up_interruptible(&ksm_thread_wait);
 
+	ksm_run_stored = ksm_run;
+
 	return count;
 }
 KSM_ATTR(run);
@@ -2138,6 +2138,8 @@ static int __init ksm_init(void)
 	 */
 	hotplug_memory_notifier(ksm_memory_callback, 100);
 #endif
+
+	ksm_run_stored = ksm_run;
 
 	show_mem_notifier_register(&ksm_show_mem_notifier_block);
 	return 0;
