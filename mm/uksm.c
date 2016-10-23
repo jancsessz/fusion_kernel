@@ -185,7 +185,7 @@ static int is_full_zero(const void *s1, size_t len)
 #define U64_MAX		(~((u64)0))
 #define UKSM_RUNG_ROUND_FINISHED  (1 << 0)
 #define TIME_RATIO_SCALE	10000
-#define SLEEP_MILLISECS		2500
+#define SLEEP_MILLISECS		999
 
 bool uksm_toggleable = 0;
 
@@ -4893,7 +4893,7 @@ static ssize_t max_cpu_percentage_store(struct kobject *kobj,
 	unsigned long max_cpu_percentage;
 	int err;
 
-	err = strict_strtoul(buf, 10, &max_cpu_percentage);
+	err = kstrtoul(buf, 10, &max_cpu_percentage);
 	if (err || max_cpu_percentage > 100)
 		return -EINVAL;
 
@@ -4924,7 +4924,7 @@ static ssize_t sleep_millisecs_store(struct kobject *kobj,
 	if (!strcmp(current->comm, "init"))
 		return -EBUSY;
 
-	err = strict_strtoul(buf, 10, &msecs);
+	err = kstrtoul(buf, 10, &msecs);
 	if (err || msecs > MSEC_PER_SEC)
 		return -EINVAL;
 
@@ -4947,7 +4947,7 @@ static int toggleable_store(struct kobject *kobj,
 	unsigned long toggleable;
 	int err;
 
-	err = strict_strtoul(buf, 10, &toggleable);
+	err = kstrtoul(buf, 10, &toggleable);
 	if (err || (toggleable != 1 && toggleable != 0)) {
 		return -EINVAL;
 	}
@@ -5033,7 +5033,7 @@ static ssize_t run_store(struct kobject *kobj, struct kobj_attribute *attr,
 	int err;
 	unsigned long flags;
 
-	err = strict_strtoul(buf, 10, &flags);
+	err = kstrtoul(buf, 10, &flags);
 	if (err || flags > UINT_MAX)
 		return -EINVAL;
 	if (flags > UKSM_RUN_MERGE)
@@ -5066,7 +5066,7 @@ static ssize_t abundant_threshold_store(struct kobject *kobj,
 	int err;
 	unsigned long flags;
 
-	err = strict_strtoul(buf, 10, &flags);
+	err = kstrtoul(buf, 10, &flags);
 	if (err || flags > 99)
 		return -EINVAL;
 
@@ -5089,7 +5089,7 @@ static ssize_t thrash_threshold_store(struct kobject *kobj,
 	int err;
 	unsigned long flags;
 
-	err = strict_strtoul(buf, 10, &flags);
+	err = kstrtoul(buf, 10, &flags);
 	if (err || flags > 99)
 		return -EINVAL;
 
@@ -5153,7 +5153,7 @@ static ssize_t cpu_ratios_store(struct kobject *kobj,
 
 		if (strstr(p, "MAX/")) {
 			p = strchr(p, '/') + 1;
-			err = strict_strtoul(p, 10, &value);
+			err = kstrtoul(p, 10, &value);
 			if (err || value > TIME_RATIO_SCALE || !value) {
 				ret =  -EINVAL;
 				goto out;
@@ -5161,7 +5161,7 @@ static ssize_t cpu_ratios_store(struct kobject *kobj,
 
 			cpuratios[i] = - (int) (TIME_RATIO_SCALE / value);
 		} else {
-			err = strict_strtoul(p, 10, &value);
+			err = kstrtoul(p, 10, &value);
 			if (err || value > TIME_RATIO_SCALE || !value) {
 				ret = -EINVAL;
 				goto out;
@@ -5292,7 +5292,7 @@ static ssize_t eval_intervals_store(struct kobject *kobj,
 			*end = '\0';
 		}
 
-		err = strict_strtoul(p, 10, &values[i]);
+		err = kstrtoul(p, 10, &values[i]);
 		if (err || !values[i]) {
 			ret = -EINVAL;
 			goto out;
@@ -5447,7 +5447,7 @@ static ssize_t pages_to_scan_store(struct kobject *kobj,
 	unsigned long pages;
 	int err;
 
-	err = strict_strtoul(buf, 10, &pages);
+	err = kstrtoul(buf, 10, &pages);
 	if (err || pages > 1000000)
 		return -EINVAL;
 
