@@ -1595,7 +1595,7 @@ static inline int check_collision(struct rmap_item *rmap_item,
 static struct page *page_trans_compound_anon(struct page *page)
 {
 	if (PageTransCompound(page)) {
-		struct page *head = compound_trans_head(page);
+		struct page *head = compound_head(page);
 		/*
 		 * head may actually be splitted and freed from under
 		 * us but it's ok here.
@@ -4681,7 +4681,7 @@ out:
 	return referenced;
 }
 
-int try_to_unmap_ksm(struct page *page, enum ttu_flags flags, struct vm_area_struct *vma)
+int try_to_unmap_ksm(struct page *page, enum ttu_flags flags, struct vm_area_struct *target_vma)
 {
 	struct stable_node *stable_node;
 	struct node_vma *node_vma;
@@ -4697,6 +4697,12 @@ int try_to_unmap_ksm(struct page *page, enum ttu_flags flags, struct vm_area_str
 	stable_node = page_stable_node(page);
 	if (!stable_node)
 		return SWAP_FAIL;
+
+	if (target_vma) {
+		unsigned long address = vma_address(page, target_vma);
+		ret = try_to_unmap_one(page, target_vma, address, flags);
+		goto out;
+	}
 again:
 	hlist_for_each_entry(node_vma, hlist, &stable_node->hlist, hlist) {
 		hlist_for_each_entry(rmap_item, rmap_hlist,
@@ -5680,10 +5686,23 @@ int ksm_madvise(struct vm_area_struct *vma, unsigned long start,
 }
 
 /* Common interface to ksm, actually the same. */
-struct page *ksm_does_need_to_copy(struct page *page,
+struct page *ksm_might_need_to_copy(struct page *page,
 			struct vm_area_struct *vma, unsigned long address)
 {
+	struct anon_vma *anon_vma = page_anon_vma(page);
 	struct page *new_page;
+
+if (PageKsm(page)) {
+		if (page_stable_node(page))
+			return page;	/* no need to copy it */
+	} else if (!anon_vma) {
+		return page;		/* no need to copy it */
+	} else if (anon_vma->root == vma->anon_vma->root &&
+		 page->index == linear_page_index(vma, address)) {
+		return page;		/* still no need to copy it */
+	}
+	if (!PageUptodate(page))
+		return page;		/* let do_swap_page report the error */
 
 	new_page = alloc_page_vma(GFP_HIGHUSER_MOVABLE, vma, address);
 	if (new_page) {
@@ -5691,13 +5710,7 @@ struct page *ksm_does_need_to_copy(struct page *page,
 
 		SetPageDirty(new_page);
 		__SetPageUptodate(new_page);
-		SetPageSwapBacked(new_page);
 		__set_page_locked(new_page);
-
-		if (page_evictable(new_page, vma))
-			lru_cache_add_lru(new_page, LRU_ACTIVE_ANON);
-		else
-			add_page_to_unevictable_list(new_page);
 	}
 
 	return new_page;
