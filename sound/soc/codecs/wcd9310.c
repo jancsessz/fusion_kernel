@@ -4134,6 +4134,15 @@ static int tabla_volatile(struct snd_soc_codec *ssc, unsigned int reg)
 	if (reg == TABLA_A_RX_HPH_L_STATUS || reg == TABLA_A_RX_HPH_R_STATUS)
 		return 1;
 
+#ifdef CONFIG_SOUND_CONTROL_HAX_3_GPL
+	/* HPH gain registers */
+	if (snd_pa_ctrl_locked) {
+		if (reg == TABLA_A_RX_HPH_L_GAIN ||
+				reg == TABLA_A_RX_HPH_R_GAIN)
+			return 1;
+	}
+#endif
+
 	if (reg == TABLA_A_CDC_COMP1_SHUT_DOWN_STATUS ||
 	    reg == TABLA_A_CDC_COMP2_SHUT_DOWN_STATUS)
 		return 1;
@@ -4157,6 +4166,12 @@ unsigned int tabla_read(struct snd_soc_codec *codec,
 {
 	unsigned int val;
 	int ret;
+	struct wcd9xxx *wcd9xxx;
+
+	if (!codec)
+		return 0;
+
+	wcd9xxx = codec->control_data;
 
 	BUG_ON(reg > TABLA_MAX_REGISTER);
 
@@ -4184,9 +4199,12 @@ int tabla_write(struct snd_soc_codec *codec, unsigned int reg,
 	unsigned int value)
 {
 	int ret;
-#ifdef CONFIG_SOUND_CONTROL_HAX_3_GPL
-	int val;
-#endif
+	struct wcd9xxx *wcd9xxx;
+
+	if (!codec)
+		return 0;
+
+	wcd9xxx = codec->control_data;
 
 	BUG_ON(reg > TABLA_MAX_REGISTER);
 
@@ -4197,18 +4215,14 @@ int tabla_write(struct snd_soc_codec *codec, unsigned int reg,
 				reg, ret);
 	}
 #ifdef CONFIG_SOUND_CONTROL_HAX_3_GPL
-	if (!snd_hax_reg_access(reg)) {
-		if (!((val = snd_hax_cache_read(reg)) != -1)) {
-			val = wcd9xxx_reg_read_safe(codec->control_data, reg);
-		}
-	} else {
+	/* In case of no reg access, override with cache value. */
+	if (!snd_hax_reg_access(reg) &&
+			snd_hax_cache_read(reg) != -1)
+		value = snd_hax_cache_read(reg);
+	else
 		snd_hax_cache_write(reg, value);
-		val = value;
-	}
-	return wcd9xxx_reg_write(codec->control_data, reg, val);
-#else
-	return wcd9xxx_reg_write(codec->control_data, reg, value);
 #endif
+	return wcd9xxx_reg_write(codec->control_data, reg, value);
 }
 #ifdef CONFIG_SOUND_CONTROL_HAX_3_GPL
 EXPORT_SYMBOL(tabla_write);
@@ -8820,12 +8834,12 @@ static const struct file_operations codec_mbhc_debug_ops = {
 #endif
 
 #ifdef CONFIG_SOUND_CONTROL_HAX_3_GPL
-struct snd_kcontrol_new *gpl_faux_snd_controls_ptr =
-		(struct snd_kcontrol_new *)tabla_snd_controls;
 struct snd_soc_codec *fauxsound_codec_ptr;
 EXPORT_SYMBOL(fauxsound_codec_ptr);
+
 int wcd9xxx_hw_revision;
 EXPORT_SYMBOL(wcd9xxx_hw_revision);
+
 #endif
 
 static int tabla_codec_probe(struct snd_soc_codec *codec)
@@ -8838,7 +8852,7 @@ static int tabla_codec_probe(struct snd_soc_codec *codec)
 	int ch_cnt;
 
 #ifdef CONFIG_SOUND_CONTROL_HAX_3_GPL
-	pr_info("tabla codec probe...\n");
+	pr_info("probing tabla codec...\n");
 	fauxsound_codec_ptr = codec;
 #endif
 
