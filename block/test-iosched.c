@@ -1015,7 +1015,7 @@ static struct elevator_type elevator_test_iosched = {
 		.elevator_init_fn = test_init_queue,
 		.elevator_exit_fn = test_exit_queue,
 	},
-	.elevator_name = "test-iosched",
+	.elevator_name = "test",
 	.elevator_owner = THIS_MODULE,
 };
 
