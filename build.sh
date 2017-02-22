@@ -21,7 +21,7 @@ HC_VER="$BASE_HC_VER$VER"
 # Vars
 export ARCH=arm
 export SUBARCH=arm
-export CROSS_COMPILE=~/android/toolchain/out/arm-eabi-5.x-cortex-a15/bin/arm-eabi-
+export CROSS_COMPILE=~/android/toolchain/out/arm-eabi-4.9/bin/arm-eabi-
 export LOCALVERSION="-$HC_VER"
 
 # Paths
