@@ -28,7 +28,7 @@ export LOCALVERSION="-$HC_VER"
 KERNEL_DIR=`pwd`
 REPACK_DIR="${HOME}/android/kernel/anykernel_msm"
 ZIP_MOVE="${HOME}/android/kernel/releases"
-ZIMAGE_DIR="${HOME}/android/android_kernel_sony_msm8960t/arch/arm/boot"
+ZIMAGE_DIR="${HOME}/android/fusion_kernel/arch/arm/boot"
 
 # Functions
 function clean_all {
