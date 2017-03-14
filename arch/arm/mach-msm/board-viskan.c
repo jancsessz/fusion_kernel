@@ -3728,11 +3728,6 @@ static struct msm_thermal_data msm_thermal_pdata = {
 	.limit_temp_degC = 60,
 	.temp_hysteresis_degC = 10,
 	.freq_step = 2,
-#ifdef CONFIG_CPU_OVERCLOCK
-	.core_limit_temp_degC = 90,
-#else
-	.core_limit_temp_degC = 80,
-#endif
 };
 
 #ifdef CONFIG_MSM_FAKE_BATTERY
@@ -5074,7 +5069,7 @@ MACHINE_START(MSM8960_LIQUID, "QCT MSM8960 LIQUID")
 	.init_very_early = msm8960_early_memory,
 MACHINE_END
 
-MACHINE_START(VISKAN_HUASHAN, "MSM8960T")
+MACHINE_START(VISKAN_HUASHAN, "VISKAN HUASHAN")
 	.map_io = msm8960_map_io,
 	.reserve = msm8960_reserve,
 	.init_irq = msm8960_init_irq,

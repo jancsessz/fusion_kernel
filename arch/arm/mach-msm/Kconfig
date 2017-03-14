@@ -2652,17 +2652,4 @@ config HAS_MACH_MEMUTILS
 	bool "Motorola MSM memcpy enhancements"
 	help
 	Faster memcpy performance for Krait
-
-config CPU_OVERCLOCK
-	bool "CPU overclock"
-	default n
-	help
-		Boost the Krait 300 to higher frequencies.
-
-config CPU_VOLTAGE_TABLE
-	bool "Enable CPU Voltage Table via sysfs for adjustements"
-	default n
-	help
-	  Krait User Votlage Control
-
 endif
