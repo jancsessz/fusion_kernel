@@ -137,7 +137,7 @@ static int __init init_cpufreq_transition_notifier_list(void)
 pure_initcall(init_cpufreq_transition_notifier_list);
 
 static int off __read_mostly;
-int cpufreq_disabled(void)
+static int cpufreq_disabled(void)
 {
 	return off;
 }
@@ -361,10 +361,6 @@ void cpufreq_notify_utilization(struct cpufreq_policy *policy,
 {
 	if (policy)
 		policy->util = util;
-
-	if (policy->util >= MIN_CPU_UTIL_NOTIFY)
-		sysfs_notify(&policy->kobj, NULL, "cpu_utilization");
-
 }
 
 /*********************************************************************
@@ -682,6 +678,68 @@ static ssize_t show_bios_limit(struct cpufreq_policy *policy, char *buf)
 	return sprintf(buf, "%u\n", policy->cpuinfo.max_freq);
 }
 
+#ifdef CONFIG_CPU_VOLTAGE_TABLE
+
+extern ssize_t acpuclk_get_vdd_levels_str(char *buf);
+extern void acpuclk_set_vdd(unsigned acpu_khz, int vdd);
+
+static ssize_t show_vdd_levels(struct kobject *a, struct attribute *b, char *buf) {
+	return acpuclk_get_vdd_levels_str(buf);
+}
+
+static ssize_t store_vdd_levels(struct kobject *a, struct attribute *b, const char *buf, size_t count) {
+
+	int i = 0, j;
+	int pair[2] = { 0, 0 };
+	int sign = 0;
+
+	if (count < 1)
+		return 0;
+
+	if (buf[0] == '-') {
+		sign = -1;
+		i++;
+	}
+	else if (buf[0] == '+') {
+		sign = 1;
+		i++;
+	}
+
+	for (j = 0; i < count; i++) {
+
+		char c = buf[i];
+
+		if ((c >= '0') && (c <= '9')) {
+			pair[j] *= 10;
+			pair[j] += (c - '0');
+		}
+		else if ((c == ' ') || (c == '\t')) {
+			if (pair[j] != 0) {
+				j++;
+
+				if ((sign != 0) || (j > 1))
+					break;
+			}
+		}
+		else
+			break;
+	}
+
+	if (sign != 0) {
+		if (pair[0] > 0)
+			acpuclk_set_vdd(0, sign * pair[0]);
+	}
+	else {
+		if ((pair[0] > 0) && (pair[1] > 0))
+			acpuclk_set_vdd((unsigned)pair[0], pair[1]);
+		else
+			return -EINVAL;
+	}
+	return count;
+}
+
+#endif	/* CONFIG_CPU_VOLTAGE_TABLE */
+
 cpufreq_freq_attr_ro_perm(cpuinfo_cur_freq, 0400);
 cpufreq_freq_attr_ro(cpuinfo_min_freq);
 cpufreq_freq_attr_ro(cpuinfo_max_freq);
@@ -697,6 +755,9 @@ cpufreq_freq_attr_rw(scaling_min_freq);
 cpufreq_freq_attr_rw(scaling_max_freq);
 cpufreq_freq_attr_rw(scaling_governor);
 cpufreq_freq_attr_rw(scaling_setspeed);
+#ifdef CONFIG_CPU_VOLTAGE_TABLE
+define_one_global_rw(vdd_levels);
+#endif
 
 static struct attribute *default_attrs[] = {
 	&cpuinfo_min_freq.attr,
@@ -713,6 +774,18 @@ static struct attribute *default_attrs[] = {
 	&scaling_setspeed.attr,
 	NULL
 };
+
+#ifdef CONFIG_CPU_VOLTAGE_TABLE
+static struct attribute *vddtbl_attrs[] = {
+	&vdd_levels.attr,
+	NULL
+};
+
+static struct attribute_group vddtbl_attr_group = {
+	.attrs = vddtbl_attrs,
+	.name = "vdd_table",
+};
+#endif	/* CONFIG_CPU_VOLTAGE_TABLE */
 
 struct kobject *cpufreq_global_kobject;
 EXPORT_SYMBOL(cpufreq_global_kobject);
@@ -1093,7 +1166,7 @@ static int cpufreq_add_dev(struct device *dev, struct subsys_interface *sif)
 
 	policy->user_policy.min = policy->min;
 	policy->user_policy.max = policy->max;
-
+	policy->util = 0;
 	blocking_notifier_call_chain(&cpufreq_policy_notifier_list,
 				     CPUFREQ_START, policy);
 
@@ -1615,6 +1688,9 @@ int __cpufreq_driver_target(struct cpufreq_policy *policy,
 
 	pr_debug("target for CPU %u: %u kHz, relation %u\n", policy->cpu,
 		target_freq, relation);
+
+	if (target_freq == policy->cur)
+		return 0;
 	if (cpu_online(policy->cpu) && cpufreq_driver->target)
 		retval = cpufreq_driver->target(policy, target_freq, relation);
 
@@ -1650,12 +1726,14 @@ int __cpufreq_driver_getavg(struct cpufreq_policy *policy, unsigned int cpu)
 {
 	int ret = 0;
 
+	if (!(cpu_online(cpu) && cpufreq_driver->getavg))
+		return 0;
+
 	policy = cpufreq_cpu_get(policy->cpu);
 	if (!policy)
 		return -EINVAL;
 
-	if (cpu_online(cpu) && cpufreq_driver->getavg)
-		ret = cpufreq_driver->getavg(policy, cpu);
+	ret = cpufreq_driver->getavg(policy, cpu);
 
 	cpufreq_cpu_put(policy);
 	return ret;
@@ -2090,6 +2168,10 @@ static int __init cpufreq_core_init(void)
 {
 	int cpu;
 
+#ifdef CONFIG_CPU_VOLTAGE_TABLE
+	int rc;
+#endif	/* CONFIG_CPU_VOLTAGE_TABLE */
+
 	if (cpufreq_disabled())
 		return -ENODEV;
 
@@ -2107,6 +2189,10 @@ static int __init cpufreq_core_init(void)
 	cpufreq_global_kobject->kset = cpufreq_kset;
 
 	register_syscore_ops(&cpufreq_syscore_ops);
+
+#ifdef CONFIG_CPU_VOLTAGE_TABLE
+	rc = sysfs_create_group(cpufreq_global_kobject, &vddtbl_attr_group);
+#endif	/* CONFIG_CPU_VOLTAGE_TABLE */
 
 	return 0;
 }
