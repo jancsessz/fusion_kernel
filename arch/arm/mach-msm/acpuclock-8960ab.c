@@ -166,8 +166,8 @@ static struct acpu_level freq_tbl_PVS0[] __initdata = {
 
 static struct acpu_level freq_tbl_PVS1[] __initdata = {
 #ifdef CONFIG_CPU_OVERCLOCK
-	{ 1, {   189000, HFPLL, 2, 0x0E }, L2(0),   925000 + VOLTAGE_TUNE, AVS(0x0) },
-	{ 1, {   281000, PLL_8, 0, 0x00 }, L2(0),   925000 + VOLTAGE_TUNE, AVS(0x70001F) },
+	{ 1, {   189000, HFPLL, 2, 0x0E }, L2(0),   900000 + VOLTAGE_TUNE, AVS(0x0) },
+	{ 1, {   281000, PLL_8, 0, 0x00 }, L2(0),   900000 + VOLTAGE_TUNE, AVS(0x70001F) },
 #endif
 	{ 1, {   384000, PLL_8, 0, 0x00 }, L2(0),   925000 + VOLTAGE_TUNE, AVS(0x70001F) },
 	{ 1, {   486000, HFPLL, 2, 0x24 }, L2(4),   925000 + VOLTAGE_TUNE, AVS(0x0) },
@@ -196,8 +196,8 @@ static struct acpu_level freq_tbl_PVS1[] __initdata = {
 
 static struct acpu_level freq_tbl_PVS2[] __initdata = {
 #ifdef CONFIG_CPU_OVERCLOCK
-	{ 1, {   189000, HFPLL, 2, 0x0E }, L2(0),   900000 + VOLTAGE_TUNE, AVS(0x0) },
-	{ 1, {   281000, PLL_8, 0, 0x00 }, L2(0),   900000 + VOLTAGE_TUNE, AVS(0x70001F) },
+	{ 1, {   189000, HFPLL, 2, 0x0E }, L2(0),   875000 + VOLTAGE_TUNE, AVS(0x0) },
+	{ 1, {   281000, PLL_8, 0, 0x00 }, L2(0),   875000 + VOLTAGE_TUNE, AVS(0x70001F) },
 #endif
 	{ 1, {   384000, PLL_8, 0, 0x00 }, L2(0),   900000 + VOLTAGE_TUNE, AVS(0x70001F) },
 	{ 1, {   486000, HFPLL, 2, 0x24 }, L2(4),   900000 + VOLTAGE_TUNE, AVS(0x0) },
@@ -226,8 +226,8 @@ static struct acpu_level freq_tbl_PVS2[] __initdata = {
 
 static struct acpu_level freq_tbl_PVS3[] __initdata = {
 #ifdef CONFIG_CPU_OVERCLOCK
-	{ 1, {   189000, HFPLL, 2, 0x0E }, L2(0),   900000 + VOLTAGE_TUNE, AVS(0x0) },
-	{ 1, {   281000, PLL_8, 0, 0x00 }, L2(0),   900000 + VOLTAGE_TUNE, AVS(0x70001F) },
+	{ 1, {   189000, HFPLL, 2, 0x0E }, L2(0),   875000 + VOLTAGE_TUNE, AVS(0x0) },
+	{ 1, {   281000, PLL_8, 0, 0x00 }, L2(0),   875000 + VOLTAGE_TUNE, AVS(0x70001F) },
 #endif
 	{ 1, {   384000, PLL_8, 0, 0x00 }, L2(0),   900000 + VOLTAGE_TUNE, AVS(0x70001F) },
 	{ 1, {   486000, HFPLL, 2, 0x24 }, L2(4),   900000 + VOLTAGE_TUNE, AVS(0x0) },
@@ -256,8 +256,8 @@ static struct acpu_level freq_tbl_PVS3[] __initdata = {
 
 static struct acpu_level freq_tbl_PVS4[] __initdata = {
 #ifdef CONFIG_CPU_OVERCLOCK
-	{ 1, {   189000, HFPLL, 2, 0x0E }, L2(0),   875000 + VOLTAGE_TUNE, AVS(0x0) },
-	{ 1, {   281000, PLL_8, 0, 0x00 }, L2(0),   875000 + VOLTAGE_TUNE, AVS(0x70001F) },
+	{ 1, {   189000, HFPLL, 2, 0x0E }, L2(0),   850000 + VOLTAGE_TUNE, AVS(0x0) },
+	{ 1, {   281000, PLL_8, 0, 0x00 }, L2(0),   850000 + VOLTAGE_TUNE, AVS(0x70001F) },
 #endif
 	{ 1, {   384000, PLL_8, 0, 0x00 }, L2(0),   875000 + VOLTAGE_TUNE, AVS(0x70001F) },
 	{ 1, {   486000, HFPLL, 2, 0x24 }, L2(4),   875000 + VOLTAGE_TUNE, AVS(0x0) },
@@ -286,8 +286,8 @@ static struct acpu_level freq_tbl_PVS4[] __initdata = {
 
 static struct acpu_level freq_tbl_PVS5[] __initdata = {
 #ifdef CONFIG_CPU_OVERCLOCK
-	{ 1, {   189000, HFPLL, 2, 0x0E }, L2(0),   875000 + VOLTAGE_TUNE, AVS(0x0) },
-	{ 1, {   281000, PLL_8, 0, 0x00 }, L2(0),   875000 + VOLTAGE_TUNE, AVS(0x70001F) },
+	{ 1, {   189000, HFPLL, 2, 0x0E }, L2(0),   850000 + VOLTAGE_TUNE, AVS(0x0) },
+	{ 1, {   281000, PLL_8, 0, 0x00 }, L2(0),   850000 + VOLTAGE_TUNE, AVS(0x70001F) },
 #endif
 	{ 1, {   384000, PLL_8, 0, 0x00 }, L2(0),   875000 + VOLTAGE_TUNE, AVS(0x70001F) },
 	{ 1, {   486000, HFPLL, 2, 0x24 }, L2(4),   875000 + VOLTAGE_TUNE, AVS(0x0) },
@@ -316,8 +316,8 @@ static struct acpu_level freq_tbl_PVS5[] __initdata = {
 
 static struct acpu_level freq_tbl_PVS6[] __initdata = {
 #ifdef CONFIG_CPU_OVERCLOCK
-	{ 1, {   189000, HFPLL, 2, 0x0E }, L2(0),   850000 + VOLTAGE_TUNE, AVS(0x0) },
-	{ 1, {   281000, PLL_8, 0, 0x00 }, L2(0),   850000 + VOLTAGE_TUNE, AVS(0x70001F) },
+	{ 1, {   189000, HFPLL, 2, 0x0E }, L2(0),   825000 + VOLTAGE_TUNE, AVS(0x0) },
+	{ 1, {   281000, PLL_8, 0, 0x00 }, L2(0),   825000 + VOLTAGE_TUNE, AVS(0x70001F) },
 #endif
 	{ 1, {   384000, PLL_8, 0, 0x00 }, L2(0),   850000 + VOLTAGE_TUNE, AVS(0x70001F) },
 	{ 1, {   486000, HFPLL, 2, 0x24 }, L2(3),   850000 + VOLTAGE_TUNE, AVS(0x0) },
