@@ -11,11 +11,12 @@ clear
 # Resources
 THREAD="-j8"
 KERNEL="zImage"
+CONFIG="menuconfig"
 DEFCONFIG="viskan_huashan_defconfig"
 
 # Kernel Details
 BASE_HC_VER="Fusion"
-VER="-1.3"
+VER="-test"
 HC_VER="$BASE_HC_VER$VER"
 
 # Vars
@@ -28,7 +29,7 @@ export LOCALVERSION="-$HC_VER"
 KERNEL_DIR=`pwd`
 REPACK_DIR="${HOME}/android/kernel/anykernel_msm"
 ZIP_MOVE="${HOME}/android/kernel/releases"
-ZIMAGE_DIR="${HOME}/android/fusion_kernel/arch/arm/boot"
+ZIMAGE_DIR="${HOME}/android/fusion_kernel_local/arch/arm/boot"
 
 # Functions
 function clean_all {
@@ -40,6 +41,14 @@ function make_kernel {
 		make $DEFCONFIG
 		make $THREAD
 		cp -vr $ZIMAGE_DIR/$KERNEL $REPACK_DIR/scripts/zImage
+}
+
+function make_config {
+		make $DEFCONFIG
+		make $CONFIG
+		make $THREAD
+		cp -vr $ZIMAGE_DIR/$KERNEL $REPACK_DIR/scripts/zImage
+
 }
 
 function make_zip {
@@ -70,7 +79,7 @@ echo -e "${restore}"
 echo "----------------------------"
 echo "Please choose your option:"
 echo "----------------------------"
-while read -p " [1]clean-build / [2]dirty-build / [3]abort " cchoice
+while read -p " [1]clean-build / [2]dirty-build / [3]menuconfig / [4]abort " cchoice
 do
 case "$cchoice" in
 	1 )
@@ -118,6 +127,31 @@ case "$cchoice" in
 		break
 		;;
 	3 )
+		HC_VER="$BASE_HC_VER$VER"
+		echo -e "${green}"
+		echo
+		echo "[..........Cleaning up..........]"
+		echo
+		echo -e "${restore}"
+		clean_all
+		echo -e "${green}"
+		echo
+		echo "[....Building `echo $HC_VER`....]"
+		echo
+		echo -e "${restore}"
+		make_config
+		echo -e "${green}"
+		echo
+		echo "[....Make `echo $HC_VER`.zip....]"
+		echo
+		echo -e "${restore}"
+		make_zip
+		echo -e "${green}"
+		echo
+		echo "[.....Moving `echo $HC_VER`.....]"
+		break
+		;;
+	4 )
 		break
 		;;
 	* )
