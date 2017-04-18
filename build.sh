@@ -15,7 +15,7 @@ DEFCONFIG="viskan_huashan_defconfig"
 
 # Kernel Details
 BASE_HC_VER="Fusion"
-VER="-1.3"
+VER="-test"
 HC_VER="$BASE_HC_VER$VER"
 
 # Vars
@@ -28,7 +28,7 @@ export LOCALVERSION="-$HC_VER"
 KERNEL_DIR=`pwd`
 REPACK_DIR="${HOME}/android/kernel/anykernel_msm"
 ZIP_MOVE="${HOME}/android/kernel/releases"
-ZIMAGE_DIR="${HOME}/android/fusion_kernel/arch/arm/boot"
+ZIMAGE_DIR="${HOME}/android/fusion_kernel_local/arch/arm/boot"
 
 # Functions
 function clean_all {
