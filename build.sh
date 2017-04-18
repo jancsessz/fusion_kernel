@@ -11,7 +11,6 @@ clear
 # Resources
 THREAD="-j8"
 KERNEL="zImage"
-CONFIG="menuconfig"
 DEFCONFIG="viskan_huashan_defconfig"
 
 # Kernel Details
@@ -43,14 +42,6 @@ function make_kernel {
 		cp -vr $ZIMAGE_DIR/$KERNEL $REPACK_DIR/scripts/zImage
 }
 
-function make_config {
-		make $DEFCONFIG
-		make $CONFIG
-		make $THREAD
-		cp -vr $ZIMAGE_DIR/$KERNEL $REPACK_DIR/scripts/zImage
-
-}
-
 function make_zip {
 		cd $REPACK_DIR
 		zip -9 -r --exclude='*.git*' `echo $HC_VER`.zip .
@@ -79,7 +70,7 @@ echo -e "${restore}"
 echo "----------------------------"
 echo "Please choose your option:"
 echo "----------------------------"
-while read -p " [1]clean-build / [2]dirty-build / [3]menuconfig / [4]abort " cchoice
+while read -p " [1]clean-build / [2]dirty-build / [3]abort " cchoice
 do
 case "$cchoice" in
 	1 )
@@ -127,31 +118,6 @@ case "$cchoice" in
 		break
 		;;
 	3 )
-		HC_VER="$BASE_HC_VER$VER"
-		echo -e "${green}"
-		echo
-		echo "[..........Cleaning up..........]"
-		echo
-		echo -e "${restore}"
-		clean_all
-		echo -e "${green}"
-		echo
-		echo "[....Building `echo $HC_VER`....]"
-		echo
-		echo -e "${restore}"
-		make_config
-		echo -e "${green}"
-		echo
-		echo "[....Make `echo $HC_VER`.zip....]"
-		echo
-		echo -e "${restore}"
-		make_zip
-		echo -e "${green}"
-		echo
-		echo "[.....Moving `echo $HC_VER`.....]"
-		break
-		;;
-	4 )
 		break
 		;;
 	* )
