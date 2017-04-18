@@ -28,10 +28,6 @@
  */
 
 #include "cyttsp4_mt_common.h"
-#ifdef CONFIG_KSM
-#include <linux/ksm.h>
-#include <linux/uksm.h>
-#endif
 
 static void cyttsp4_lift_all(struct cyttsp4_mt_data *md)
 {
@@ -460,16 +456,6 @@ static void cyttsp4_mt_fb_suspend(struct cyttsp4_mt_data *ts)
 
 	pm_runtime_put(dev);
 	ts->fb_suspended = true;
-
-#if defined(CONFIG_UKSM)
-	if (uksm_toggleable == 0) {
-		if (uksm_run_stored != UKSM_RUN_STOP)
-			uksm_run = uksm_run_stored;
-	}
-#elif defined(CONFIG_KSM_LEGACY)
-	if (ksm_run_stored != KSM_RUN_STOP)
-			ksm_run = ksm_run_stored;
-#endif
 }
 
 static void cyttsp4_mt_fb_resume(struct cyttsp4_mt_data *ts)
@@ -483,15 +469,6 @@ static void cyttsp4_mt_fb_resume(struct cyttsp4_mt_data *ts)
 
 	pm_runtime_get_sync(dev);
 	ts->fb_suspended = false;
-#if defined(CONFIG_UKSM)
-	if (uksm_toggleable == 0) {
-		if (uksm_run_stored != UKSM_RUN_STOP)
-			uksm_run = UKSM_RUN_STOP;
-	}
-#elif defined(CONFIG_KSM_LEGACY)
-	if (ksm_run_stored != KSM_RUN_STOP)
-			ksm_run = KSM_RUN_STOP;
-#endif
 }
 
 static int fb_notifier_callback(struct notifier_block *self,
