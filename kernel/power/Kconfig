@@ -331,7 +331,14 @@ config DEDUCE_WAKEUP_REASONS
 	bool
 	default n
 
+
 config PM_SYNC_BEFORE_SUSPEND
 	bool "Sync file systems before suspend"
 	depends on PM
 	default n
+
+config STATE_NOTIFIER
+	bool "State Notifier Driver"
+	default y
+	help
+	  Allows monitoring the current display state.
