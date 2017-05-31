@@ -15,7 +15,7 @@ DEFCONFIG="viskan_huashan_defconfig"
 
 # Kernel Details
 BASE_HC_VER="Fusion"
-VER="-1.3"
+VER="-1.4"
 HC_VER="$BASE_HC_VER$VER"
 
 # Vars
