@@ -21,6 +21,7 @@ obj-$(CONFIG_CPU_FREQ_GOV_BIOSHOCK)  += cpufreq_bioshock.o
 obj-$(CONFIG_CPU_FREQ_GOV_IMPULSE)	+= cpufreq_impulse.o
 obj-$(CONFIG_CPU_FREQ_GOV_SMARTASSV2) += cpufreq_smartass2.o
 obj-$(CONFIG_CPU_FREQ_GOV_BARRY_ALLEN)  += cpufreq_barry_allen.o
+obj-$(CONFIG_CPU_FREQ_GOV_ZZMOOVE)      += cpufreq_zzmoove.o
 
 # CPUfreq cross-arch helpers
 obj-$(CONFIG_CPU_FREQ_TABLE)		+= freq_table.o
