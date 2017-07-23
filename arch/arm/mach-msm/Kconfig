@@ -2651,13 +2651,13 @@ config HAS_MACH_MEMUTILS
 	default n
 	bool "Motorola MSM memcpy enhancements"
 	help
-	Faster memcpy performance for Krait
+	  Faster memcpy performance for Krait
 
 config CPU_OVERCLOCK
 	bool "CPU overclock"
 	default n
 	help
-		Boost the Krait 300 to higher frequencies.
+	  Boost the Krait 300 to higher frequencies.
 
 config CPU_VOLTAGE_TABLE
 	bool "Enable CPU Voltage Table via sysfs for adjustements"
@@ -2669,13 +2669,18 @@ config FORCE_FAST_CHARGE
 	bool "Force AC charge mode at will"
 	default y
 	help
-		A simple sysfs interface to force adapters that
-		are detected as USB to charge as AC.
+	  A simple sysfs interface to force adapters that
+	  are detected as USB to charge as AC.
 
 config INTELLI_PLUG
 	bool "intelliplug hotplug"
 	default y
 	help
-		An improved hotplug by faux123.
+	  An improved hotplug by faux123.
+
+config THUNDERPLUG_CONTROL
+	bool "Enable plugging down/up of cores based on load per core"
+	help
+	  This driver hotplugs cpu cores based on per-core load
 
 endif
