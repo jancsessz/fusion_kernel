@@ -15,7 +15,7 @@ DEFCONFIG="viskan_huashan_defconfig"
 
 # Kernel Details
 BASE_HC_VER="Fusion"
-VER="-1.6"
+VER="-1.8"
 HC_VER="$BASE_HC_VER$VER"
 
 # Vars
@@ -32,14 +32,14 @@ ZIMAGE_DIR="${HOME}/android/fusion_kernel/arch/arm/boot"
 
 # Functions
 function clean_all {
-		rm -rf $REPACK_DIR/scripts/zImage
+		rm -rf $REPACK_DIR/kernel/zImage
 		make clean && make mrproper
 }
 
 function make_kernel {
 		make $DEFCONFIG
 		make $THREAD
-		cp -vr $ZIMAGE_DIR/$KERNEL $REPACK_DIR/scripts/zImage
+		cp -vr $ZIMAGE_DIR/$KERNEL $REPACK_DIR/kernel/zImage
 }
 
 function make_zip {
